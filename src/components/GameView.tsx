@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { audio } from '../utils/AudioService';
 import { Mail } from 'lucide-react';
 
@@ -276,17 +276,146 @@ function PhasesSection() {
   );
 }
 
+interface Quest {
+  title: string;
+  techs: string[];
+  desc: string;
+  images?: string[];
+}
+
+interface ImageCarouselModalProps {
+  quest: Quest;
+  onClose: () => void;
+}
+
+function ImageCarouselModal({ quest, onClose }: ImageCarouselModalProps) {
+  const [currentImgIdx, setCurrentImgIdx] = useState(0);
+
+  if (!quest.images || quest.images.length === 0) return null;
+
+  const handleNext = () => {
+    audio.playSelect();
+    setCurrentImgIdx((prev) => (prev + 1) % quest.images!.length);
+  };
+
+  const handlePrev = () => {
+    audio.playSelect();
+    setCurrentImgIdx((prev) => (prev - 1 + quest.images!.length) % quest.images!.length);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') {
+        handleNext();
+      } else if (e.key === 'ArrowLeft') {
+        handlePrev();
+      } else if (e.key === 'Escape') {
+        audio.playSelect();
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentImgIdx, quest.images]);
+
+  return (
+    <div className="fixed inset-0 bg-black/85 flex items-center justify-center z-50 p-4">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.9 }}
+        transition={{ duration: 0.2 }}
+        className="bg-game-panel border-4 border-game-border p-6 w-full max-w-4xl relative pixel-borders flex flex-col justify-between max-h-[90vh]"
+      >
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="font-arcade text-xs md:text-sm text-game-primary">
+            {quest.title} - Screenshots
+          </h3>
+          <button
+            onClick={() => {
+              audio.playSelect();
+              onClose();
+            }}
+            onMouseEnter={() => audio.playHover()}
+            className="text-game-accent font-arcade text-xs md:text-sm hover:text-white px-2 py-1 transition-colors"
+          >
+            [ X ] FECHAR
+          </button>
+        </div>
+
+        <div className="w-full h-[50vh] md:h-[60vh] flex items-center justify-center bg-black/50 relative overflow-hidden pixel-borders mb-4">
+          <button
+            onClick={handlePrev}
+            onMouseEnter={() => audio.playHover()}
+            className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 bg-game-panel/90 text-game-text hover:text-game-accent hover:bg-game-panel p-2 md:p-3 pixel-borders font-arcade text-base md:text-lg z-10 transition-colors"
+          >
+            &lt;
+          </button>
+
+          <AnimatePresence mode="wait">
+            <motion.img
+              key={currentImgIdx}
+              src={quest.images[currentImgIdx]}
+              alt={`${quest.title} screenshot ${currentImgIdx + 1}`}
+              className="max-w-full max-h-full object-contain"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+            />
+          </AnimatePresence>
+
+          <button
+            onClick={handleNext}
+            onMouseEnter={() => audio.playHover()}
+            className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 bg-game-panel/90 text-game-text hover:text-game-accent hover:bg-game-panel p-2 md:p-3 pixel-borders font-arcade text-base md:text-lg z-10 transition-colors"
+          >
+            &gt;
+          </button>
+        </div>
+
+        <div className="flex flex-col items-center">
+          <div className="font-arcade text-xs text-game-text/80">
+            [ IMAGEM {currentImgIdx + 1} DE {quest.images.length} ]
+          </div>
+          <div className="font-pixel text-lg text-game-text/50 mt-1 hidden md:block">
+            Use as setas esquerda/direita ou clique nas setas laterais para navegar
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 function QuestsSection() {
-  const quests = [
+  const [selectedQuest, setSelectedQuest] = useState<Quest | null>(null);
+
+  const quests: Quest[] = [
     {
       title: 'Whisper Core',
       techs: ['Python', 'Whisper', 'OpenRouter API', 'SQLite'],
-      desc: 'Sistema de transcrição de áudio em múltiplos formatos via upload ou gravação em tempo real (microfone/som do PC). Possui integração com modelos de IA e prompts personalizados para formatação automatizada do conteúdo em minutos.'
+      desc: 'Sistema de transcrição de áudio em múltiplos formatos via upload ou gravação em tempo real (microfone/som do PC). Possui integração com modelos de IA e prompts personalizados para formatação automatizada do conteúdo em minutos.',
+      images: [
+        'whisper-core/whisper1.png',
+        'whisper-core/whisper2.png',
+        'whisper-core/whisper3.png',
+        'whisper-core/whisper4.png',
+        'whisper-core/whisper5.png',
+        'whisper-core/whisper6.png'
+      ]
     },
     {
       title: 'Full Stack Brain-Hub',
       techs: ['Flutter', 'Node.js', 'TypeScript', 'Supabase', 'n8n', 'IA Generativa'],
-      desc: 'Hub de soluções com frontend em Flutter, APIs Node.js autenticadas via JWT. Integrado a fluxos n8n e IA para automatizar ações em Drive, WhatsApp, Gmail.'
+      desc: 'Hub de soluções com frontend em Flutter, APIs Node.js autenticadas via JWT. Integrado a fluxos n8n e IA para automatizar ações em Drive, WhatsApp, Gmail.',
+      images: [
+        'brainhub/foto1.png',
+        'brainhub/foto2.png',
+        'brainhub/foto3.png',
+        'brainhub/foto4.png',
+        'brainhub/foto5.png',
+        'brainhub/foto6.png'
+      ]
     },
     {
       title: 'Alert-app',
@@ -306,26 +435,49 @@ function QuestsSection() {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-8">
-      {quests.map((quest, idx) => (
-        <div
-          key={idx}
-          className="bg-game-bg p-5 pixel-borders flex flex-col h-full hover:bg-game-secondary transition-colors"
-          onMouseEnter={() => audio.playHover()}
-        >
-          <h3 className="font-arcade text-sm text-game-accent mb-3">{quest.title}</h3>
-          <p className="text-game-text/80 text-sm md:text-base flex-1 mb-4">
-            {quest.desc}
-          </p>
-          <div className="flex flex-wrap gap-2 mt-auto">
-            {quest.techs.map((tech, i) => (
-              <span key={i} className="text-xs bg-game-primary/20 text-game-primary px-2 py-1 rounded">
-                {tech}
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-8">
+        {quests.map((quest, idx) => (
+          <div
+            key={idx}
+            className={`bg-game-bg p-5 pixel-borders flex flex-col h-full hover:bg-game-secondary transition-colors relative ${quest.images ? 'cursor-pointer border-game-primary/30' : ''
+              }`}
+            onMouseEnter={() => audio.playHover()}
+            onClick={() => {
+              if (quest.images) {
+                audio.playSelect();
+                setSelectedQuest(quest);
+              }
+            }}
+          >
+            {quest.images && (
+              <span className="absolute -top-3 -right-3 px-2 py-1 text-[9px] font-arcade bg-game-primary text-white pixel-borders animate-pulse">
+                GALERIA
               </span>
-            ))}
+            )}
+            <h3 className="font-arcade text-sm text-game-accent mb-3">{quest.title}</h3>
+            <p className="text-game-text/80 text-sm md:text-base flex-1 mb-4">
+              {quest.desc}
+            </p>
+            <div className="flex flex-wrap gap-2 mt-auto">
+              {quest.techs.map((tech, i) => (
+                <span key={i} className="text-xs bg-game-primary/20 text-game-primary px-2 py-1 rounded">
+                  {tech}
+                </span>
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+
+      <AnimatePresence>
+        {selectedQuest && (
+          <ImageCarouselModal
+            quest={selectedQuest}
+            onClose={() => setSelectedQuest(null)}
+          />
+        )}
+      </AnimatePresence>
+    </>
   );
 }
