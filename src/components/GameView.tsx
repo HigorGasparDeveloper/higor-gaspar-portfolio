@@ -82,7 +82,7 @@ function AboutSection() {
         <h3 className="font-arcade text-game-success mb-4">&gt; Lore (História de Origem)</h3>
         <p>
           Com forte embasamento acadêmico e prático, atuo na arquitetura e no desenvolvimento de aplicações Web, Desktop e Mobile.
-          Minha jornada começou com o curso Técnico em Desenvolvimento de Sistemas (2019-2020) e foi expandida pela graduação em Análise e Desenvolvimento de Sistemas na Universidade Anhembi Morumbi (2022-2025).
+          Minha jornada começou com o curso Técnico em Desenvolvimento de Sistemas (2019-2020), foi expandida pela graduação em Análise e Desenvolvimento de Sistemas na Universidade Anhembi Morumbi (2022-2025) e, atualmente, pela pós-graduação em Arquitetura de Software, Ciência de Dados e Cybersecurity na PUCPR (início em Julho de 2026 e previsão de término em Agosto de 2027).
         </p>
         <p className="mt-4">
           Sou entusiasmado por desvendar tecnologias emergentes, liderando sistemas de Visão Computacional, Cloud, IA Generativa e infraestruturas robustas na AWS.
@@ -93,6 +93,7 @@ function AboutSection() {
         <div className="bg-game-bg p-4 pixel-borders">
           <h4 className="font-arcade text-sm text-game-accent mb-2">Formação (Treinamentos)</h4>
           <ul className="list-none space-y-2 text-base">
+            <li><span className="text-game-success">»</span> Pós-Graduação em Arquitetura de Software, Ciência de Dados e Cybersecurity - PUCPR (Jul/2026 - Ago/2027)</li>
             <li><span className="text-game-success">»</span> ADS - Universidade Anhembi Morumbi</li>
             <li><span className="text-game-success">»</span> Técnico em Desenvolvimento de Sistemas</li>
             <li><span className="text-game-success">»</span> Segurança em aplicações Web</li>
@@ -158,7 +159,7 @@ function ArsenalSection() {
     },
     {
       title: "IA & Automação",
-      items: ['Visão Computacional', 'Deep Learning', 'n8n', 'RPA', 'Node-red', 'Arduino', 'Raspberry Pi']
+      items: ['Visão Computacional', 'Deep Learning', 'n8n', 'Make', 'RPA', 'Node-red', 'Arduino', 'Raspberry Pi']
     },
     {
       title: "Arquitetura & Protocolos",
@@ -277,6 +278,11 @@ function PhasesSection() {
 
 function QuestsSection() {
   const quests = [
+    {
+      title: 'Whisper Core',
+      techs: ['Python', 'Whisper', 'OpenRouter API', 'SQLite'],
+      desc: 'Sistema de transcrição de áudio em múltiplos formatos via upload ou gravação em tempo real (microfone/som do PC). Possui integração com modelos de IA e prompts personalizados para formatação automatizada do conteúdo em minutos.'
+    },
     {
       title: 'Full Stack Brain-Hub',
       techs: ['Flutter', 'Node.js', 'TypeScript', 'Supabase', 'n8n', 'IA Generativa'],
